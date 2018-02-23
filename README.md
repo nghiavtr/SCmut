@@ -1,7 +1,7 @@
-# SCmut: A pipeline to detect cell-specific mutation from single-cell RNA-sequencing
+# SCmut: A method to detect cell-specific mutation from single-cell RNA-sequencing
 
 ## 1. Introduction
-SCmut is a novel method for cell-specific somatic mutation detection from single-cell RNA-sequencing. SCmut requies sequencing data of RNA of single cells for detecting mutations and DNA (Exome) of matched samples (tumor and germline) for a case. If the data of DNA sequencing is not available, the list of confirmed somatic mutations should be supplied in advance.
+SCmut is a novel and robust statistical method for cell-specific somatic mutation detection from single-cell RNA-sequencing. SCmut requies RNA-sequencing data of single cells and bulk-cell DNA-sequencing (e.g whole exome sequencing - WES) of matched samples (tumor and normal). If the DNA-sequencing data are not available, the list of somatic mutations can be used.
 
 Software requirements for SCmut:
 - Java 1.8 or higher
@@ -11,24 +11,24 @@ Software requirements for SCmut:
 - VarScan 2.3.7 
 - GATKAnalysisTK 3.6
 
-Annotation reference: SCmut requires a fasta file of transcript sequences and a gtf file of transcript annotation. SCmut supports the ensembl annotation version GRCh37.75 in the current version:
+Annotation reference: SCmut requires a fasta file of transcript sequences and a gtf file of transcript annotation. The ensembl annotation version GRCh37.75 is used here as an example:
 - Download the sequences of transcripts: http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh37.75.cdna.all.fa.gz
 - Download the annotation of transcripts: http://ftp.ensembl.org/pub/release-75/gtf/homo_sapiens/Homo_sapiens.GRCh37.75.gtf.gz
 
-## 2. Pre-processing for RNA-seq and DNA-seq (WES) data
+## 2. Pre-processing for RNA-seq and DNA-seq data
 ### 2.1 Alignment
-Start from FASTQ files, all data samples are input for read alignment to get BAM files. Since RNA-seq and DNA-seq have different biological data structures, tools for the read alignment should be selected properly. For example, we use Tophat for RNA-seq and BWA for WES in our study.
+Start from FASTQ files, all data samples are input for read alignment to get BAM files. Since RNA-seq and DNA-seq have different biological data structures, tools for the read alignment should be selected properly. For example, we use Tophat for RNA-seq and BWA for DNA-seq.
 
 ### 2.2 Preparation
 In order to reduce the number of false positives, we use standard BAM processing steps suggested from GATK pipeline. Assume that we do processing for a input BAM file input.bam, then for user's convenience, we aim to present the following steps in the copy-and-paste manner. 
 ```sh
 bam_fn=input.bam
 ```
-The workflow can be used to both DNAseq and RNAseq, because only one extra step is required for RNA-seq data. But we need to specify the type of data ($seqType) in advance, for example
+The workflow can be used to both DNAseq and RNAseq, but an extra step is required for RNA-seq data. We need to specify the type of data ($seqType) in advance:
 ```sh
 seqType="RNA"
 ```
-Assume that we already downloaded reference genome and known variant sites from phase I of 1000 Genomes Project and dbSNP-138 from broadinstitute.org. In this example, we use annotation b37 version 2.8.
+Assume that we already downloaded the reference genome and known variant sites from phase I of 1000 Genomes Project and dbSNP-138 from broadinstitute.org. We use annotation b37 version 2.8 for this example.
 ```sh
 genomeFasta_b37="human_g1k_v37.fasta"
 refKnown1="Mills_and_1000G_gold_standard.indels.b37.vcf"
@@ -58,7 +58,7 @@ java -Xmx16g -Djava.io.tmpdir=`pwd`/tmp -jar picard.jar ReorderSam VALIDATION_ST
 samtools index $reorder_fn
 ```
 
-#### 2.6 Only for RNA-seq: Split'N'Trim and reassign mapping qualities
+#### 2.6 Extra step for for RNA-seq: Split'N'Trim and reassign mapping qualities
 ```sh
 Realignment_inFn=$reorder_fn
 if [ "$seqType" == "RNA" ]; then
@@ -67,7 +67,7 @@ if [ "$seqType" == "RNA" ]; then
   Realignment_inFn=$split_fn  
 fi
 ```
-So, if the input if RNA-seq, we get input of RealingerTargetCreator step from the output of SplitNCigarReads (Realignment_inFn=$split_fn) otherwise we use the output from Reorder step (Realignment_inFn=$reorder_fn). 
+Thus, for RNA-seq data we get input of RealingerTargetCreator step from the output of SplitNCigarReads (Realignment_inFn=$split_fn), for DNA-seq data we use the output from Reorder step (Realignment_inFn=$reorder_fn). 
 
 #### 2.7 GATK - RealingerTargetCreator
 ```sh
@@ -91,7 +91,7 @@ java -Xmx16g -Djava.io.tmpdir=`pwd`/tmp -jar GenomeAnalysisTK.jar -T PrintReads 
 ```
 
 ## 3. Somatic mutation detection from matched samples
-After preprocessing steps, we have two BAM files from germline sample (normal.bam) and tumor sample (tumor.bam) from DNA-seq data. We use any somatic mutation detection tools such as SOMAC (http://fafner.meb.ki.se/biostatwiki/somac/), Mutect or VarScan to discover somatic mutations from the matched samples. The codes below are an example of using Mutec1:
+If the DNA-sequencing data of matched samples are available, we can discover the somatic mutations. Assume that after preprocessing we obtain two BAM files of germline (normal) sample (normal.bam) and tumor sample (tumor.bam) from DNA-seq data. Any somatic mutation detection tools such as SOMAC (http://fafner.meb.ki.se/biostatwiki/somac/), Mutect or VarScan can be used to discover somatic mutations from the matched samples. The following example is for Mutect:
 ```sh
 DNA_g_fn="normal.bam"
 DNA_t_fn="tumor.bam"
@@ -100,16 +100,17 @@ java -Xmx16g -Djava.io.tmpdir=`pwd`/tmp -jar muTect-1.1.4.jar --analysis_type Mu
 ```
 
 ## 4. Variant calling of multiple files from both RNA-seq and DNA-seq data
-We collect all the file names of processed BAM of RNA single-cell samples and the DNA bulk-cell samples ($DNA_t_fn and $DNA_g_fn) into a variable $fileList. Then, the samtools and varscan2 are used to call variants of all samples simultaneously.
+We list the names of processed BAM files of RNA single cells and (if available) the two DNA bulk-cell samples ($DNA_t_fn and $DNA_g_fn) in a variable $fileList. Then, the samtools and varscan2 are used to call variants of all samples simultaneously.
 
 ```sh
 snv_fn="output.snp.vcf"
 samtools mpileup -f $genomeFasta_b37 $fileList | java -jar varscan2-2.3.7.jar mpileup2snp --min-coverage 5  --min-avg-qual 15 --min-var-freq 0.01 --p-value 1 > $snv_fn
 ```
 
-## 5. Cell-specific mutation detection
-In this section, we introduce how to use SCmut by a step-by-step tutorial using a public scRNAseq dataset. This aims to test SCmut by just doing a copy-and-paste of the example commands.
+The data of variants are collected for the next step to detect cell-specific mutations.
 
+## 5. Cell-specific mutation detection
+In this section, we introduce how to use SCmut by an example using a public sc-RNAseq dataset. The data and source codes are available in the SCmut project site (https://github.com/nghiavtr/SCmut).
 
 ```R
 source("SCmut.R")
@@ -117,14 +118,18 @@ source("SCmut.R")
 # load data
 load("example.RData")
 
+### The input data include
+# raFull: count from variant allele
+# rrFull: count from reference allele
+# mut.sites: a list of somatic mutations, possibly discovered from the BC-WES (step 3) or other sources
+# cellType: labels of cells (tumor/non-tumor)
+###
+
 # germ counts
 germ = ncol(raFull)
 galt = raFull[,germ]
 gn = rrFull[,germ] + raFull[,germ]
 germstat = cbind(alt=galt, total=gn)
-
-# mutations from mutect calls:
-length(mut.sites)
 
 # observed-mutation sites
 ncell = ncol(rrFull)-3
@@ -161,7 +166,7 @@ points(nread.obs[signif], vaf.obs[signif], pch=0, cex=2.0, lwd=2,col=mycol[10])
 ```
 
 ## 6. License
-SCmut uses GNU General Public License GPL-3
+SCmut uses GNU General Public License GPL-3.
 
 ## 7. References
 (update later)
