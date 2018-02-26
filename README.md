@@ -11,7 +11,7 @@ Software requirements for SCmut:
 - VarScan 2.3.7 
 - GATKAnalysisTK 3.6
 
-Annotation reference: Several common annotations and databases are required for alignment, preprocessing and variant calling.  For example, the reference genome and known variant sites from phase I of 1000 Genomes Project and dbSNP-138 from broadinstitute.org.
+Annotation reference: Several common annotations and databases are required for alignment, preprocessing and variant calling.  For example, we can use the annotation b37 of the reference genome and known variant sites from phase I of 1000 Genomes Project and dbSNP-138 from broadinstitute.org.
 
 ## 2. Pre-processing for RNA-seq and DNA-seq data
 ### 2.1 Alignment
