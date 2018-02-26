@@ -7,9 +7,9 @@ Software requirements for SCmut:
 - Java 1.8 or higher
 - R 3.2 or higher
 - Samtools 1.3 or higher
-- Picard 2.3
-- VarScan 2.3.7 
-- GATKAnalysisTK 3.6
+- Picard 2.3 or higher
+- VarScan 2.3.7 or higher
+- GATKAnalysisTK 3.6 or higher
 
 Annotation reference: Several common annotations and databases are required for alignment, preprocessing and variant calling.  For example, we can use the annotation b37 of the reference genome and known variant sites from phase I of 1000 Genomes Project and dbSNP-138 from broadinstitute.org.
 
@@ -94,7 +94,7 @@ If the DNA-sequencing data of matched samples are available, we can discover the
 DNA_g_fn="normal.bam"
 DNA_t_fn="tumor.bam"
 mutation_fn="SomaticMutation.vcf")
-java -Xmx16g -Djava.io.tmpdir=`pwd`/tmp -jar muTect-1.1.4.jar --analysis_type MuTect --reference_sequence $genomeFasta_b37 --cosmic $cosmic --dbsnp $dbsnp --input_file:normal $DNA_g_fn --input_file:tumor $DNA_t_fn --out $mutation_fn
+java -Xmx16g -Djava.io.tmpdir=`pwd`/tmp -jar muTect.jar --analysis_type MuTect --reference_sequence $genomeFasta_b37 --cosmic $cosmic --dbsnp $dbsnp --input_file:normal $DNA_g_fn --input_file:tumor $DNA_t_fn --out $mutation_fn
 ```
 
 ## 4. Variant calling of multiple files from both RNA-seq and DNA-seq data
@@ -102,7 +102,7 @@ We list the names of processed BAM files of RNA single cells and (if available) 
 
 ```sh
 snv_fn="output.snp.vcf"
-samtools mpileup -f $genomeFasta_b37 $fileList | java -jar varscan2-2.3.7.jar mpileup2snp --min-coverage 5  --min-avg-qual 15 --min-var-freq 0.01 --p-value 1 > $snv_fn
+samtools mpileup -f $genomeFasta_b37 $fileList | java -jar varscan2.jar mpileup2snp --min-coverage 5  --min-avg-qual 15 --min-var-freq 0.01 --p-value 1 > $snv_fn
 ```
 
 The data of variants are collected for the next step to detect cell-specific mutations.
