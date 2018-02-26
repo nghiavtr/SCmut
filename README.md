@@ -11,9 +11,7 @@ Software requirements for SCmut:
 - VarScan 2.3.7 
 - GATKAnalysisTK 3.6
 
-Annotation reference: SCmut requires a fasta file of transcript sequences and a gtf file of transcript annotation. The ensembl annotation version GRCh37.75 is used here as an example:
-- Download the sequences of transcripts: http://ftp.ensembl.org/pub/release-75/fasta/homo_sapiens/cdna/Homo_sapiens.GRCh37.75.cdna.all.fa.gz
-- Download the annotation of transcripts: http://ftp.ensembl.org/pub/release-75/gtf/homo_sapiens/Homo_sapiens.GRCh37.75.gtf.gz
+Annotation reference: Several common annotations and databases are required for alignment, preprocessing and variant calling.  For example, the reference genome and known variant sites from phase I of 1000 Genomes Project and dbSNP-138 from broadinstitute.org.
 
 ## 2. Pre-processing for RNA-seq and DNA-seq data
 ### 2.1 Alignment
