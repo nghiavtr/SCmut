@@ -130,7 +130,7 @@ gn = rrFull[,germ] + raFull[,germ]
 germstat = cbind(alt=galt, total=gn)
 
 # observed-mutation sites
-ncell = ncol(rrFull)-3
+ncell = ncol(rrFull)-2
 x0.obs = c(rrFull[mut.sites,1:ncell])
    x.obs = x0.obs[!is.na(x0.obs)]
 y0.obs = c(raFull[mut.sites,1:ncell])
