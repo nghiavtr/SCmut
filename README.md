@@ -108,7 +108,7 @@ samtools mpileup -f $genomeFasta_b37 $fileList | java -jar varscan2.jar mpileup2
 The data of variants are collected for the next step to detect cell-specific mutations.
 
 ## 5. Cell-specific mutation detection
-In this section, we introduce how to use SCmut by an example using a public sc-RNAseq dataset. The data and source codes are available in the SCmut project site (https://github.com/nghiavtr/SCmut).
+In this section, we introduce how to use SCmut by an example from a public sc-RNAseq dataset [1]. The data and source codes are available in the SCmut project site (https://github.com/nghiavtr/SCmut).
 
 ```R
 source("SCmut.R")
@@ -167,4 +167,5 @@ points(nread.obs[signif], vaf.obs[signif], pch=0, cex=2.0, lwd=2,col=mycol[10])
 SCmut uses GNU General Public License GPL-3.
 
 ## 7. References
+1.Chung, W. et al. Single-cell RNA-seq enables comprehensive tumour and immune cell profiling in primary breast cancer. Nat Commun 8, 15081 (2017).
 (update later)
