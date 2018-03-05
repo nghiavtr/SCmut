@@ -167,5 +167,6 @@ points(nread.obs[signif], vaf.obs[signif], pch=0, cex=2.0, lwd=2,col=mycol[10])
 SCmut uses GNU General Public License GPL-3.
 
 ## 7. References
-1.Chung, W. et al. Single-cell RNA-seq enables comprehensive tumour and immune cell profiling in primary breast cancer. Nat Commun 8, 15081 (2017).
+1. Chung, W. et al. Single-cell RNA-seq enables comprehensive tumour and immune cell profiling in primary breast cancer. Nat Commun 8, 15081 (2017).
+
 (update later)
