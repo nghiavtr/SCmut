@@ -144,7 +144,7 @@ fdr = scfdr(rrFull[,1:ncell], raFull[,1:ncell],  mut.sites, germstat)
 
 # plots
 par(mar=c(5,5,4,2)+0.1)
-contour(fdr$x, fdr$y, fdr$fdr.xy, levels=seq(0.1,1,len=10), xlab='SC total reads', ylab='SC VAF',cex.axis=2.0, cex.main=2.0, cex.lab=2.0)
+contour(fdr$x, fdr$y, fdr$fdr.xy, levels=seq(0.1,1,len=10), xlab='scRNA total reads', ylab='scRNA VAF',cex.axis=2.0, cex.main=2.0, cex.lab=2.0)
 # get cell types
 tum = cellType$index=='Tumor'
 tum.mat = matrix(rep(tum,length(mut.sites)),nrow=length(mut.sites), byrow=TRUE)
