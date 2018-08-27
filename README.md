@@ -89,7 +89,7 @@ java -Xmx16g -Djava.io.tmpdir=`pwd`/tmp -jar GenomeAnalysisTK.jar -T PrintReads 
 ```
 
 ## 3. Somatic mutation detection from matched samples
-If the DNA-sequencing data of matched samples are available, we can discover the somatic mutations. Assume that after preprocessing we obtain two BAM files of germline (normal) sample (normal.bam) and tumor sample (tumor.bam) from DNA-seq data. Any somatic mutation detection tools such as SOMAC (http://fafner.meb.ki.se/biostatwiki/somac/), Mutect or VarScan can be used to discover somatic mutations from the matched samples. The following example is for Mutect:
+If the DNA-sequencing data of matched samples are available, we can discover the somatic mutations. Assume that after preprocessing we obtain two BAM files of germline (normal) sample (normal.bam) and tumor sample (tumor.bam) from DNA-seq data. Any somatic mutation detection tools such as Mutect or VarScan can be used to discover somatic mutations from the matched samples. The following example is for Mutect:
 ```sh
 DNA_g_fn="normal.bam"
 DNA_t_fn="tumor.bam"
@@ -150,7 +150,7 @@ tum = cellType$index=='Tumor'
 tum.mat = matrix(rep(tum,length(mut.sites)),nrow=length(mut.sites), byrow=TRUE)
 tum.indic = c(tum.mat)[!is.na(x0.obs)]
 points(nread.obs[tum.indic], vaf.obs[tum.indic], pch=16, col='red',cex=1.0, lwd=2)
-points(nread.obs[!tum.indic], vaf.obs[!tum.indic], pch=16, col='blue',cex=1.0, lwd=2)
+points(nread.obs[!tum.indic], vaf.obs[!tum.indic], pch=6, col='blue',cex=0.6, lwd=1)
 # plot the cell-specific mutations  
 library(gplots)
 library(RColorBrewer)
