@@ -1,7 +1,7 @@
-# SCmut: A method to detect cell-specific mutation from single-cell RNA-sequencing
+# SCmut: A method to detect cell-level mutation from single-cell RNA-sequencing
 
 ## 1. Introduction
-SCmut is a novel and robust statistical method for cell-specific somatic mutation detection from single-cell RNA-sequencing. SCmut requies RNA-sequencing data of single cells and bulk-cell DNA-sequencing (e.g whole exome sequencing - WES) of matched samples (tumor and normal). If the DNA-sequencing data are not available, the list of somatic mutations can be used.
+SCmut is a novel and robust statistical method for cell-level somatic mutation detection from single-cell RNA-sequencing. SCmut requies RNA-sequencing data of single cells and bulk-cell DNA-sequencing (e.g whole exome sequencing - WES) of matched samples (tumor and normal). If the DNA-sequencing data are not available, the list of somatic mutations can be used.
 
 Software requirements for SCmut:
 - Java 1.8 or higher
@@ -89,7 +89,7 @@ java -Xmx16g -Djava.io.tmpdir=`pwd`/tmp -jar GenomeAnalysisTK.jar -T PrintReads 
 ```
 
 ## 3. Somatic mutation detection from matched samples
-If the DNA-sequencing data of matched samples are available, we can discover the somatic mutations. Assume that after preprocessing we obtain two BAM files of germline (normal) sample (normal.bam) and tumor sample (tumor.bam) from DNA-seq data. Any somatic mutation detection tools such as SOMAC (http://fafner.meb.ki.se/biostatwiki/somac/), Mutect or VarScan can be used to discover somatic mutations from the matched samples. The following example is for Mutect:
+If the DNA-sequencing data of matched samples are available, we can discover the somatic mutations. Assume that after preprocessing we obtain two BAM files of germline (normal) sample (normal.bam) and tumor sample (tumor.bam) from DNA-seq data. Any somatic mutation detection tools such as Mutect or VarScan can be used to discover somatic mutations from the matched samples. The following example is for Mutect:
 ```sh
 DNA_g_fn="normal.bam"
 DNA_t_fn="tumor.bam"
@@ -105,9 +105,9 @@ snv_fn="output.snp.vcf"
 samtools mpileup -f $genomeFasta_b37 $fileList | java -jar varscan2.jar mpileup2snp --min-coverage 5  --min-avg-qual 15 --min-var-freq 0.01 --p-value 1 > $snv_fn
 ```
 
-The data of variants are collected for the next step to detect cell-specific mutations.
+The data of variants are collected for the next step to detect cell-level mutations.
 
-## 5. Cell-specific mutation detection
+## 5. cell-level mutation detection
 In this section, we introduce how to use SCmut by an example from a public sc-RNAseq dataset [1]. The data and source codes are available in the SCmut project site (https://github.com/nghiavtr/SCmut).
 
 ```R
@@ -144,14 +144,19 @@ fdr = scfdr(rrFull[,1:ncell], raFull[,1:ncell],  mut.sites, germstat)
 
 # plots
 par(mar=c(5,5,4,2)+0.1)
-contour(fdr$x, fdr$y, fdr$fdr.xy, levels=seq(0.1,1,len=10), xlab='SC total reads', ylab='SC VAF',cex.axis=2.0, cex.main=2.0, cex.lab=2.0)
+contour(fdr$x, fdr$y, fdr$fdr.xy, levels=seq(0.1,1,len=10), xlab='scRNA total reads', ylab='scRNA VAF',cex.axis=2.0, cex.main=2.0, cex.lab=2.0)
 # get cell types
 tum = cellType$index=='Tumor'
 tum.mat = matrix(rep(tum,length(mut.sites)),nrow=length(mut.sites), byrow=TRUE)
 tum.indic = c(tum.mat)[!is.na(x0.obs)]
 points(nread.obs[tum.indic], vaf.obs[tum.indic], pch=16, col='red',cex=1.0, lwd=2)
+<<<<<<< HEAD
 points(nread.obs[!tum.indic], vaf.obs[!tum.indic], pch=16, col='blue',cex=1.0, lwd=2)
+# plot the cell-level mutations  
+=======
+points(nread.obs[!tum.indic], vaf.obs[!tum.indic], pch=6, col='blue',cex=0.6, lwd=1)
 # plot the cell-specific mutations  
+>>>>>>> a5191dabcdfcf035fc22016bf4a8798950ffa5d7
 library(gplots)
 library(RColorBrewer)
 mycol=rev(brewer.pal(n=10, name="RdBu"))
