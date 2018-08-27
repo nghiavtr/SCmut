@@ -132,9 +132,9 @@ germstat = cbind(alt=galt, total=gn)
 # observed-mutation sites
 ncell = ncol(rrFull)-2
 x0.obs = c(rrFull[mut.sites,1:ncell])
-   x.obs = x0.obs[!is.na(x0.obs)]
+x.obs = x0.obs[!is.na(x0.obs)]
 y0.obs = c(raFull[mut.sites,1:ncell])
-   y.obs = y0.obs[!is.na(x0.obs)]
+y.obs = y0.obs[!is.na(x0.obs)]
 nread.obs = x.obs+y.obs
 vaf.obs = y.obs/nread.obs
 
@@ -162,6 +162,7 @@ points(nread.obs[signif], vaf.obs[signif], pch=0, cex=2.0, lwd=2,col=mycol[7])
 # signif mutated cells: fdr<0.05
 signif = c(fdr$ifdr<0.05)[!is.na(x0.obs)]
 points(nread.obs[signif], vaf.obs[signif], pch=0, cex=2.0, lwd=2,col=mycol[10])
+
 ```
 
 ## 6. License
