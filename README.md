@@ -149,17 +149,10 @@ contour(fdr$x, fdr$y, fdr$fdr.xy, levels=seq(0.1,1,len=10), xlab='scRNA total re
 tum = cellType$index=='Tumor'
 tum.mat = matrix(rep(tum,length(mut.sites)),nrow=length(mut.sites), byrow=TRUE)
 tum.indic = c(tum.mat)[!is.na(x0.obs)]
-points(nread.obs[tum.indic], vaf.obs[tum.indic], pch=16, col='red',cex=1.0, lwd=2)
-<<<<<<< HEAD
-<<<<<<< HEAD
-points(nread.obs[!tum.indic], vaf.obs[!tum.indic], pch=16, col='blue',cex=1.0, lwd=2)
 # plot the cell-level mutations  
-=======
-=======
->>>>>>> a5191dabcdfcf035fc22016bf4a8798950ffa5d7
+points(nread.obs[tum.indic], vaf.obs[tum.indic], pch=16, col='red',cex=1.0, lwd=2)
 points(nread.obs[!tum.indic], vaf.obs[!tum.indic], pch=6, col='blue',cex=0.6, lwd=1)
-# plot the cell-specific mutations  
->>>>>>> a5191dabcdfcf035fc22016bf4a8798950ffa5d7
+
 library(gplots)
 library(RColorBrewer)
 mycol=rev(brewer.pal(n=10, name="RdBu"))
