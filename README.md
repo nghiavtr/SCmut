@@ -104,6 +104,24 @@ We list the names of processed BAM files of RNA single cells and (if available) 
 snv_fn="output.snp.vcf"
 samtools mpileup -f $genomeFasta_b37 $fileList | java -jar varscan2.jar mpileup2snp --min-coverage 5  --min-avg-qual 15 --min-var-freq 0.01 --p-value 1 > $snv_fn
 ```
+We also provide a small script in R-codes to extract the count from variant allele (raFull) and the count from reference allele (rrFull) from output.snp.vcf. These data objects are main input to the cell-level mutation detection in Section 5.
+
+```R
+#Note: the codes have been not optimised so might take time.
+variantDat.table=read.table("output.snp.vcf", sep="\t",header=TRUE)
+allcoords=paste(variantDat.table$Chrom,variantDat.table$Position,sep="_")
+variantDat.rr=lapply(variantDat.table[,11], function(x){
+  sapply(unlist(strsplit(as.character(x)," ")),function(y) unlist(strsplit(y,":"))[c(3)])
+})
+variantDat.ra=lapply(variantDat.table[,11], function(x){
+  sapply(unlist(strsplit(as.character(x)," ")),function(y) unlist(strsplit(y,":"))[c(4)])
+})
+rrFull=do.call(rbind,variantDat.rr)
+raFull=do.call(rbind,variantDat.ra)
+raFull=apply(raFull,2,as.integer)
+rrFull=apply(rrFull,2,as.integer)
+rownames(raFull)=rownames(rrFull)=allcoords 
+```
 
 The data of variants are collected for the next step to detect cell-level mutations.
 
